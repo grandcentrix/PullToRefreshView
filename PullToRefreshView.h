@@ -38,7 +38,6 @@ typedef enum {
 @protocol PullToRefreshViewDelegate;
 
 @interface PullToRefreshView : UIView {
-	id<PullToRefreshViewDelegate> delegate;
     UIScrollView *scrollView;
 	PullToRefreshViewState state;
 
@@ -49,7 +48,7 @@ typedef enum {
 }
 
 @property (nonatomic, readonly) UIScrollView *scrollView;
-@property (nonatomic, assign) id<PullToRefreshViewDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id<PullToRefreshViewDelegate> delegate;
 
 - (void)refreshLastUpdatedDate;
 - (void)finishedLoading;

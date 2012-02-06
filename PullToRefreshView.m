@@ -125,7 +125,6 @@
     [formatter setPMSymbol:@"PM"];
     [formatter setDateFormat:@"MM/dd/yy hh:mm a"];
     lastUpdatedLabel.text = [NSString stringWithFormat:@"Last Updated: %@", [formatter stringFromDate:date]];
-    [formatter release];
 }
 
 - (void)setState:(PullToRefreshViewState)state_ {
@@ -205,13 +204,6 @@
 
 - (void)dealloc {
 	[scrollView removeObserver:self forKeyPath:@"contentOffset"];
-	
-    [arrowImage release];
-    [activityView release];
-    [statusLabel release];
-    [lastUpdatedLabel release];
-
-    [super dealloc];
 }
 
 @end
