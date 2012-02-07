@@ -43,12 +43,16 @@ typedef enum {
 
 	UILabel *lastUpdatedLabel;
 	UILabel *statusLabel;
-	CALayer *arrowImage;
+	CALayer *arrowLayer;
 	UIActivityIndicatorView *activityView;
 }
 
 @property (nonatomic, readonly) UIScrollView *scrollView;
 @property (nonatomic, unsafe_unretained) id<PullToRefreshViewDelegate> delegate;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *shadowColor;
+@property (nonatomic, strong) UIImage *arrowImage;
+@property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
 
 - (void)refreshLastUpdatedDate;
 - (void)finishedLoading;

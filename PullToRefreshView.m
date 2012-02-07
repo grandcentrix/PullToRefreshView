@@ -41,21 +41,55 @@
 @implementation PullToRefreshView
 @synthesize delegate, scrollView;
 
+- (UIColor *)textColor {
+    return statusLabel.textColor;
+}
+
+- (void)setTextColor:(UIColor *)value {
+    lastUpdatedLabel.textColor = value;
+    statusLabel.textColor = value;
+}
+
+- (UIColor *)shadowColor {
+    return statusLabel.shadowColor;
+}
+
+- (void)setShadowColor:(UIColor *)shadowColor {
+    lastUpdatedLabel.shadowColor = shadowColor;
+    statusLabel.shadowColor = shadowColor;
+}
+
 - (void)showActivity:(BOOL)shouldShow animated:(BOOL)animated {
     if (shouldShow) [activityView startAnimating];
     else [activityView stopAnimating];
 
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:(animated ? 0.1f : 0.0)];
-    arrowImage.opacity = (shouldShow ? 0.0 : 1.0);
+    arrowLayer.opacity = (shouldShow ? 0.0 : 1.0);
     [UIView commitAnimations];
 }
 
 - (void)setImageFlipped:(BOOL)flipped {
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.1f];
-    arrowImage.transform = (flipped ? CATransform3DMakeRotation(M_PI * 2, 0.0f, 0.0f, 1.0f) : CATransform3DMakeRotation(M_PI, 0.0f, 0.0f, 1.0f));
+    arrowLayer.transform = (flipped ? CATransform3DMakeRotation(M_PI * 2, 0.0f, 0.0f, 1.0f) : CATransform3DMakeRotation(M_PI, 0.0f, 0.0f, 1.0f));
     [UIView commitAnimations];
+}
+
+- (UIImage *)arrowImage {
+    return [UIImage imageWithCGImage:(__bridge CGImageRef)arrowLayer.contents];
+}
+
+- (void)setArrowImage:(UIImage *)arrowImage {
+    arrowLayer.contents = (id)arrowImage.CGImage;
+}
+
+- (UIActivityIndicatorViewStyle)activityIndicatorStyle {
+    return activityView.activityIndicatorViewStyle;
+}
+
+- (void)setActivityIndicatorStyle:(UIActivityIndicatorViewStyle)activityIndicatorStyle {
+    activityView.activityIndicatorViewStyle = activityIndicatorStyle;
 }
 
 - (id)initWithScrollView:(UIScrollView *)scroll {
@@ -71,8 +105,6 @@
 		lastUpdatedLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, frame.size.height - 30.0f, self.frame.size.width, 20.0f)];
 		lastUpdatedLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		lastUpdatedLabel.font = [UIFont systemFontOfSize:12.0f];
-		lastUpdatedLabel.textColor = TEXT_COLOR;
-		lastUpdatedLabel.shadowColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
 		lastUpdatedLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 		lastUpdatedLabel.backgroundColor = [UIColor clearColor];
 		lastUpdatedLabel.textAlignment = UITextAlignmentCenter;
@@ -81,29 +113,30 @@
 		statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, frame.size.height - 48.0f, self.frame.size.width, 20.0f)];
 		statusLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		statusLabel.font = [UIFont boldSystemFontOfSize:13.0f];
-		statusLabel.textColor = TEXT_COLOR;
-		statusLabel.shadowColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
 		statusLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 		statusLabel.backgroundColor = [UIColor clearColor];
 		statusLabel.textAlignment = UITextAlignmentCenter;
 		[self addSubview:statusLabel];
 
-		arrowImage = [[CALayer alloc] init];
-		arrowImage.frame = CGRectMake(25.0f, frame.size.height - 60.0f, 24.0f, 52.0f);
-		arrowImage.contentsGravity = kCAGravityResizeAspect;
-		arrowImage.contents = (id) [UIImage imageNamed:@"arrow"].CGImage;
+		arrowLayer = [[CALayer alloc] init];
+		arrowLayer.frame = CGRectMake(25.0f, frame.size.height - 60.0f, 24.0f, 52.0f);
+		arrowLayer.contentsGravity = kCAGravityResizeAspect;
+		arrowLayer.contents = (id) [UIImage imageNamed:@"arrow"].CGImage;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
 		if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
-			arrowImage.contentsScale = [[UIScreen mainScreen] scale];
+			arrowLayer.contentsScale = [[UIScreen mainScreen] scale];
 		}
 #endif
 
-		[self.layer addSublayer:arrowImage];
+		[self.layer addSublayer:arrowLayer];
 
         activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		activityView.frame = CGRectMake(30.0f, frame.size.height - 38.0f, 20.0f, 20.0f);
 		[self addSubview:activityView];
+        
+        self.textColor = TEXT_COLOR;
+        self.shadowColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
 
 		[self setState:PullToRefreshViewStateNormal];
     }
