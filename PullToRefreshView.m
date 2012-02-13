@@ -154,7 +154,7 @@
 		date = [delegate pullToRefreshViewLastUpdated:self];
 
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"dd.MM.yyyy hh:mm"];
+    [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
     lastUpdatedLabel.text = [NSString stringWithFormat:@"Aktualisiert: %@", [formatter stringFromDate:date]];
 }
 
