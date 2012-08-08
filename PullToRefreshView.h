@@ -30,34 +30,37 @@
 #import <QuartzCore/QuartzCore.h>
 
 typedef enum {
-    PullToRefreshViewStateNormal = 0,
-	PullToRefreshViewStateReady,
-	PullToRefreshViewStateLoading
+	kPullToRefreshViewStateUninitialized = 0,
+	kPullToRefreshViewStateNormal,
+	kPullToRefreshViewStateReady,
+	kPullToRefreshViewStateLoading,
+    kPullToRefreshViewStateProgrammaticRefresh,
+	kPullToRefreshViewStateOffline
 } PullToRefreshViewState;
 
 @protocol PullToRefreshViewDelegate;
 
 @interface PullToRefreshView : UIView {
-    UIScrollView *scrollView;
+	id<PullToRefreshViewDelegate> delegate;
+	UIScrollView *scrollView;
 	PullToRefreshViewState state;
 
-	UILabel *lastUpdatedLabel;
+	UILabel *subtitleLabel;
 	UILabel *statusLabel;
-	CALayer *arrowLayer;
+	CALayer *arrowImage;
+	CALayer *offlineImage;
 	UIActivityIndicatorView *activityView;
 }
 
 @property (nonatomic, readonly) UIScrollView *scrollView;
-@property (nonatomic, unsafe_unretained) id<PullToRefreshViewDelegate> delegate;
-@property (nonatomic, strong) UIColor *textColor;
-@property (nonatomic, strong) UIColor *shadowColor;
-@property (nonatomic, strong) UIImage *arrowImage;
-@property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
+@property (nonatomic, assign) id<PullToRefreshViewDelegate> delegate;
 
 - (void)refreshLastUpdatedDate;
-- (void)finishedLoading;
 
 - (id)initWithScrollView:(UIScrollView *)scrollView;
+- (void)finishedLoading;
+- (void)beginLoading;
+- (void)containingViewDidUnload;
 
 @end
 
